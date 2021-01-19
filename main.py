@@ -175,6 +175,7 @@ if __name__ == '__main__':
         file_name = ntpath.basename(file_path).split('.')[0]
         files_status_dict['File_Name'] = file_name
         files_status_dict['Status'] = "In Progress"
+        files_status_dict['File_Path'] = file_path
         liat_dir1.append(files_status_dict)
 
     df_stat = pd.DataFrame(liat_dir1)
