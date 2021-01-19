@@ -5,6 +5,7 @@ import function_convert
 import keyword_maps
 import sqlparse
 from sqlparse.sql import IdentifierList, Identifier, Function, Parenthesis, Comparison, Where
+import ntpath
 
 class covert_function:
     def __init__(self, sql_as_string):
@@ -69,7 +70,7 @@ class covert_function:
     def convert(sql_as_string,file_path):
         '''Converts the functions based on mapping dataframe & reurns the converted SQL'''
         sql_file = sql_as_string
-        file_name = file_path.split(r"/")[-1].split('.')[0]
+        file_name = ntpath.basename(file_path).split('.')[0]
         map = pd.read_csv(r"func_maps\\{}.csv".format(file_name))
         sql_as_string = sql_file
         map["complexity"] = map["SQL_Functions"].str.count("\(")
