@@ -1,19 +1,18 @@
-import pandas as pd
-from os import listdir
-from os.path import isfile, join
 import keyword_maps
 import function_convert
 import convert_sql
 import API_Check
 import logging
 logging.basicConfig(filename='app.log', level=logging.INFO)
-from tkinter import *
 import configparser
 import pandas as pd
+import os
+
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
 parser = configparser.ConfigParser()
-parser.read('conf/ETLConfig.ini')
+parser.read(ROOT_DIR +'/conf/ETLConfig.ini')
 
 gcp_project_id = parser['GCP']['PROJECT_ID']
 
@@ -30,9 +29,8 @@ root.geometry('200x100')
 file = askopenfile(filetypes=[('SQL Files', '*.sql')])
 '''
 
-file_path = 'C:/Workspace/SQL_To_BigQ/Objects_Complexity/Complex_SQL/'
-out_file_path = r"C:\\Workspace\\SQL_To_BigQ\\Objects_Complexity\\Output_Complex\\"
-diff_file_path = r"C:\\Workspace\\SQL_To_BigQ\\Objects_Complexity\\diffs\\Complex_SQL\\"
+out_file_path = r"{}\\Output_Complex\\".format(ROOT_DIR)
+diff_file_path = r"{}\\diffs\\Complex_SQL\\".format(ROOT_DIR)
 #onlyfiles = [file_path+f for f in listdir(file_path) if isfile(join(file_path, f))]
 
 
@@ -73,7 +71,7 @@ def run(file):
     ''' Direct conversions'''
     df_direct_conv = function_convert.map_direct(keyword_maps.direct_conversion)
     new_df = pd.concat([df_converted_func, df_direct_conv, df_regex_map ]).reset_index()
-    new_df.to_csv(r"func_maps\\{}.csv".format(file_name))
+    new_df.to_csv(ROOT_DIR+r"\func_maps\\{}.csv".format(file_name))
 
 
 
@@ -91,7 +89,7 @@ def run(file):
     #print(API_Check.API_check(new_sql_as_string))
     '''Checking with API'''
 
-    file_log = open("log/run_log/{}.log".format(file_name), "w+")
+    file_log = open(ROOT_DIR+"/log/run_log/{}.log".format(file_name), "w+")
 
     gcp_client = API_Check.gcpClient(gcp_project_id, json_file, dryRun=True, use_query_cache=False)
     client, jobconfig = gcp_client.api_config()
@@ -126,8 +124,8 @@ def run(file):
     final_function_list = cov_sql_final.get_func()
 
 
-    function_log = open("log/function_log/success/function_{}.log".format(file_name), "w+")
-    function_err_log = open("log/function_log/error/function_error_{}.log".format(file_name), "w+")
+    function_log = open(ROOT_DIR+"/log/function_log/success/function_{}.log".format(file_name), "w+")
+    function_err_log = open(ROOT_DIR+"/log/function_log/error/function_error_{}.log".format(file_name), "w+")
 
     gcp_client = API_Check.gcpClient(gcp_project_id, json_file, dryRun=True, use_query_cache=False)
     client, jobconfig = gcp_client.api_config()
@@ -179,7 +177,7 @@ if __name__ == '__main__':
         liat_dir1.append(files_status_dict)
 
     df_stat = pd.DataFrame(liat_dir1)
-    df_stat.to_csv("Run_stat.csv", index=False)
+    df_stat.to_csv(ROOT_DIR+"/Run_stat.csv", index=False)
 
     for k, file_path in parser['SOURCE'].items():
         file_name = ntpath.basename(file_path).split('.')[0]
@@ -194,7 +192,7 @@ if __name__ == '__main__':
         i+=1
         liat_dir2.append(files_status_dict)
         df_stat= pd.DataFrame(liat_dir2)
-        df_stat.to_csv("Run_stat.csv", index=False)
+        df_stat.to_csv(ROOT_DIR+"/Run_stat.csv", index=False)
 
 
 
