@@ -67,11 +67,11 @@ class covert_function:
         return df_converted_func
 
     @staticmethod
-    def convert(sql_as_string,file_path):
+    def convert(sql_as_string,file_path, ROOT_DIR):
         '''Converts the functions based on mapping dataframe & reurns the converted SQL'''
         sql_file = sql_as_string
         file_name = ntpath.basename(file_path).split('.')[0]
-        map = pd.read_csv(r"func_maps\\{}.csv".format(file_name))
+        map = pd.read_csv(ROOT_DIR+"/func_maps/{}.csv".format(file_name))
         sql_as_string = sql_file
         map["complexity"] = map["SQL_Functions"].str.count("\(")
         map.sort_values(by=['complexity'], inplace=True, ascending=False)

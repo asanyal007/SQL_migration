@@ -76,7 +76,7 @@ def run(file):
 
 
     ''' Creating converted SQL files based on the list'''
-    new_sql_as_string = cov_sql.convert(sql_as_string,file)
+    new_sql_as_string = cov_sql.convert(sql_as_string,file, ROOT_DIR=ROOT_DIR)
 
 
 
